@@ -20,8 +20,15 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+ktor {
+    fatJar {
+        archiveFileName.set("fat.jar")
+    }
+}
+
 repositories {
     mavenCentral()
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
 dependencies {
@@ -29,6 +36,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-server-cio-jvm")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
@@ -36,9 +44,14 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.6.0")
     implementation("org.jetbrains.exposed:exposed-java-time:0.30.1")
+    implementation("com.zaxxer:HikariCP:5.0.1")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:${ktor_version}")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks.create("stage") {
+    dependsOn("installDist")
 }
